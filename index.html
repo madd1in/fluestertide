@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#04070c">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' shape-rendering='crispEdges'%3E%3Crect width='64' height='64' fill='%2304070c'/%3E%3Cpath d='M30 6h4v20h-4zM30 38h4v20h-4zM6 30h20v4H6zM38 30h20v4H38z' fill='%23ffd21f'/%3E%3Crect x='26' y='26' width='12' height='12' fill='%237ee0d2'/%3E%3C/svg%3E">
+  <meta name="description" content="Ein vollständiges, eigenständiges Piraten-Point-and-Click-Abenteuer im Retro-Pixel-Look. Sieben Schauplätze, schräge Dialoge und ein Meer voller Geheimnisse.">
+  <title>Flüstertide — Ein Piratenabenteuer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+<main class="app game-shell" id="app">
+  <div class="stage-wrap" id="stageWrap">
+    <div class="stage" id="stage" tabindex="-1">
+      <canvas id="world" width="320" height="180" aria-label="Illustrierte Spielwelt"></canvas>
+      <div class="scanlines" aria-hidden="true"></div>
+      <div class="scene-vignette" aria-hidden="true"></div>
+      <div class="stage-top" aria-hidden="false">
+        <div class="scene-chip"><span class="chip-live"></span><span id="sceneName">Krummwasser · Hafen</span><b id="chapterLabel">AKT I · DIE STILLE VOR DEM FLUCH</b></div>
+        <nav class="tools" aria-label="Spielmenü">
+          <button id="mapBtn" title="Karte · M"><span aria-hidden="true">⌁</span><span class="button-label">Karte</span></button>
+          <button id="journalBtn" title="Logbuch · J"><span aria-hidden="true">▤</span><span class="button-label">Logbuch</span></button>
+          <button id="hintBtn" title="Hinweis · H"><span aria-hidden="true">✧</span><span class="button-label">Hinweis</span></button>
+          <button id="audioBtn" aria-pressed="false" title="Musik einschalten"><span aria-hidden="true">♪</span><span class="button-label">Ton aus</span></button>
+          <button id="voiceBtn" aria-pressed="false" title="Stimme (Dialoge vorlesen) · V"><span aria-hidden="true">❝</span><span class="button-label">Stimme</span></button>
+          <button id="fsBtn" title="Vollbild · F"><span aria-hidden="true">⛶</span><span class="button-label">Vollbild</span></button>
+          <button id="menuBtn" aria-label="Einstellungen" title="Einstellungen"><span aria-hidden="true">☰</span><span class="button-label">Menü</span></button>
+          <button id="helpBtn" title="So spielst du"><span aria-hidden="true">?</span><span class="button-label">Hilfe</span></button>
+        </nav>
+      </div>
+      <div id="hotspots" class="hotspots" aria-label="Gegenstände und Figuren"></div>
+      <span id="hoverLabel" class="hover-label" aria-hidden="true"></span>
+      <div id="roomTitle" class="room-title" aria-hidden="true"></div>
+      <button class="reveal-btn" id="revealBtn" aria-pressed="false" title="Alle anklickbaren Stellen zeigen · Leertaste">⌖ <span>Hotspots</span></button>
+      <div id="conversation" class="conversation" hidden aria-live="polite">
+        <div class="speaker-avatar" id="speakerAvatar" aria-hidden="true">M</div>
+        <div class="dialog-body"><span class="speaker-name" id="speakerName"></span><p id="dialogText"></p><div id="choices" class="choices"></div></div>
+        <button id="nextLine" class="next-line" title="Weiter · Enter" aria-label="Dialog weiter">▼</button>
+      </div>
+      <div id="titleScreen" class="title-screen">
+        <div class="title-content"><div class="eyebrow"><span></span> EIN ABENTEUER IN DREI AKTEN <span></span></div><p class="title-prefix">Der Fluch der</p><h1>FLÜSTER<span>TIDE</span></h1><div class="title-ornament">✦ ───── ⌁ ────── ✦</div><p class="title-copy">Eine Insel ohne Stimmen.<br>Ein Kapitän mit einem Geheimnis.<br>Und du, mit erstaunlich leeren Taschen.</p><div class="start-actions"><button id="startBtn" class="primary">▶ Segel setzen</button><button id="continueBtn" class="secondary" hidden>Reise fortsetzen</button></div><p class="cover-note">POINT &amp; CLICK · DEUTSCH · AUTOMATISCHES SPEICHERN · F = VOLLBILD · CONTROLLER: A = KLICKEN, B = ZURÜCK</p></div>
+        <div class="title-tag"><span>01 / 07</span> WILLKOMMEN IN KRUMMWASSER</div>
+      </div>
+      <div id="ending" class="ending" hidden><div class="ending-inner"><span class="eyebrow">DAS MEER HAT SEINE STIMME WIEDER</span><h2>Ein letzter<br>guter Fluch.</h2><p id="endingText"></p><p class="ending-credit">Ein eigenständiges Abenteuer mit Mira „Motte“ Morrow.<br>Danke fürs Segelsetzen.</p><div class="ending-actions"><button id="endingJournal" class="primary">Dein Logbuch</button><button id="replayBtn" class="secondary">Noch einmal spielen</button></div></div></div>
+    </div>
+  </div>
+  <section class="dock" id="dock" aria-label="Steuerung">
+    <div class="dock-row">
+      <span class="sentence-prefix" aria-hidden="true">▸</span>
+      <span id="actionText">Dein Abenteuer wartet am nächsten Steg.</span>
+      <div class="verbs" role="group" aria-label="Aktion auswählen"><button data-verb="look" title="Ansehen · 1"><span>◉</span>Ansehen<kbd>1</kbd></button><button data-verb="talk" title="Reden · 2"><span>☷</span>Reden<kbd>2</kbd></button><button data-verb="take" title="Nehmen · 3"><span>♧</span>Nehmen<kbd>3</kbd></button><button data-verb="use" title="Benutzen · 4"><span>⚒</span>Benutzen<kbd>4</kbd></button></div>
+      <div id="inventory" class="inventory" aria-label="Inventar"><p class="empty-inventory">Noch nichts außer großen Plänen.</p></div>
+      <span id="saveStatus" class="save-status">◇ Automatisches Speichern</span>
+    </div>
+    <span id="inventoryTip" class="gui-hidden">Gegenstände lassen sich kombinieren.</span>
+    <span id="itemCount" class="gui-hidden">0</span>
+  </section>
+</main>
+<div id="modalBackdrop" class="modal-backdrop" hidden>
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button id="closeModal" class="close-modal" aria-label="Schließen">×</button><span id="modalKicker" class="eyebrow">FLÜSTERTIDE</span><h2 id="modalTitle"></h2><div id="modalContent"></div></section>
+</div>
+<script src="story.js"></script><script src="art.js"></script><script src="game.js"></script>
+</body>
+</html>
