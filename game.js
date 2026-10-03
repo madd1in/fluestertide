@@ -72,9 +72,16 @@
     stage.style.width = Math.floor(w) + 'px'; stage.style.height = Math.floor(h) + 'px';
   }
   function showRoomTitle() {
-    const el = $('roomTitle'); if (!el) return;
-    el.textContent = Story.scenes[state.scene].name;
-    el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    const el=$('roomTitle'); if(!el)return;
+    el.textContent=Story.scenes[state.scene].name;
+    el.classList.remove('show','chapter'); void el.offsetWidth; el.classList.add('show');
+  }
+  function showChapterCard() {
+    const el=$('roomTitle'); if(!el)return;
+    const title=typeof Story.chapterTitle==='function' ? Story.chapterTitle(state) : ('AKT '+state.chapter);
+    el.textContent=title.toUpperCase();
+    el.classList.remove('show','chapter'); void el.offsetWidth; el.classList.add('chapter','show');
+    audio.note(523,.28,'triangle',.13);audio.note(659,.28,'triangle',.13,.16);audio.note(784,.5,'triangle',.13,.32);
   }
   async function toggleFullscreen() {
     try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); }
@@ -84,6 +91,7 @@
   let shownHotspots = false, lines = [], pendingChoices = [], hintTier = 0, hintObjective = '';
   let focusBeforeModal = null, lastScene = state.scene, lastFrame = 0, saveAvailable = false;
   let hero = { x: 870, y: 815, target: 870, facing: 1 };
+  let lastChapter = 0;
   let stored = readSave();
   const verbLabels = { look:'Ansehen', talk:'Reden mit', take:'Nehmen', use:'Benutzen', walk:'Gehen zu' };
 
@@ -127,11 +135,13 @@
   function refresh() {
     if (state.scene !== lastScene) {
       lastScene = state.scene; hero.x=850; hero.target=850; selected=null;
-      speech.stop();
-      if (active) showRoomTitle();
+      speech.stop(); if(audio.enabled)audio.amb.start();
+      const chapterChanged = active && state.chapter !== lastChapter; if (active) lastChapter = state.chapter;
+      if (active) { if (chapterChanged) showChapterCard(); else showRoomTitle(); }
       if (pixelOn) startDissolve();
       else $('stage').animate([{opacity:.5},{opacity:1}],{duration:reducedMotion?0:320});
     }
+    else if (active && state.chapter !== lastChapter) { lastChapter = state.chapter; showChapterCard(); }
     $('sceneName').textContent = Story.scenes[state.scene].name;
     $('chapterLabel').textContent = typeof Story.chapterTitle==='function' ? Story.chapterTitle(state) : `AKT ${state.chapter}`;
     $('itemCount').textContent=state.inventory.length;
@@ -318,13 +328,28 @@
   const audio = {
     enabled:false, context:null, master:null, timer:null, step:0,
     async toggle() {
-      if(this.enabled){this.enabled=false;clearInterval(this.timer);this.master.gain.setTargetAtTime(0,this.context.currentTime,.3);}
-      else {try{const Audio=window.AudioContext || window.webkitAudioContext;if(!Audio)return;this.context ||= new Audio();await this.context.resume();if(!this.master){this.master=this.context.createGain();this.master.connect(this.context.destination);this.master.gain.value=0;}this.enabled=true;this.master.gain.setTargetAtTime(.17,this.context.currentTime,.35);this.tick();this.timer=setInterval(()=>this.tick(),200);}catch(error){console.warn('Musik nicht verfügbar',error);}}
+      if(this.enabled){this.enabled=false;clearInterval(this.timer);this.amb.stop();this.master.gain.setTargetAtTime(0,this.context.currentTime,.3);}
+      else {
+        try {
+          const Audio=window.AudioContext || window.webkitAudioContext;if(!Audio)return;
+          this.context ||= new Audio();await this.context.resume();
+          if(!this.master){
+            this.master=this.context.createGain();this.master.connect(this.context.destination);this.master.gain.value=0;
+            const d=this.context.createDelay(.6);d.delayTime.value=.28;
+            const fb=this.context.createGain();fb.gain.value=.35;
+            const wet=this.context.createGain();wet.gain.value=.33;
+            d.connect(fb);fb.connect(d);d.connect(wet);wet.connect(this.master);this.echoSend=d;
+          }
+        } catch(error){ console.warn('Musik nicht verfügbar',error); return; }
+        this.enabled=true;this.master.gain.setTargetAtTime(.17,this.context.currentTime,.35);this.tick();this.timer=setInterval(()=>this.tick(),200);this.amb.start();
+      }
       $('audioBtn').setAttribute('aria-pressed',String(this.enabled));$('audioBtn').querySelector('.button-label').textContent=this.enabled?'Ton an':'Ton aus';$('audioBtn').title=this.enabled?'Musik ausschalten':'Musik einschalten';
     },
     note(freq,duration=.45,type='sine',volume=.2,delay=0) {
       if(!this.enabled)return;const t=this.context.currentTime+delay,o=this.context.createOscillator(),g=this.context.createGain();o.type=type;o.frequency.value=freq;
-      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(volume,t+.018);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(g);g.connect(this.master);o.start(t);o.stop(t+duration+.025);
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(volume,t+.018);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(g);g.connect(this.master);
+      if(this.echoSend&&['wreck','vault'].includes(state.scene))g.connect(this.echoSend);
+      o.start(t);o.stop(t+duration+.025);
     },
     tick() {
       if(document.hidden)return;
@@ -344,7 +369,54 @@
     },
     effect(kind) {if(kind==='success'){this.note(587,.45,'sine',.3);this.note(740,.45,'sine',.23,.1);this.note(880,.7,'sine',.2,.2);}else this.note(660,.12,'sine',.18);},
     step() { this.note(96,.05,'triangle',.05); },
-    gull() { this.note(1174,.16,'sawtooth',.04); this.note(880,.2,'sawtooth',.035,.19); }
+    gull() { this.note(1174,.16,'sawtooth',.04); this.note(880,.2,'sawtooth',.035,.19); },
+    /* Ortsatmosphäre: Rausch-Wellen, Wind, Kneipenmurmeln, Glockenkammer-Summen
+       plus seltene Einzelsounds (Klirren, Knarzen, Tropfen, Nebelhorn). */
+    amb: {
+      nodes: [], timer: 0, nbuf: null,
+      noise(ctx) {
+        if(!this.nbuf){ const b=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),d=b.getChannelData(0); for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1; this.nbuf=b; }
+        return this.nbuf;
+      },
+      loopNoise(ctx,freq,q,vol,lfoRate,lfoDepth) {
+        const src=ctx.createBufferSource();src.buffer=this.noise(ctx);src.loop=true;
+        const f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=freq;f.Q.value=q;
+        const g=ctx.createGain();g.gain.value=vol;
+        const lfo=ctx.createOscillator();lfo.frequency.value=lfoRate;
+        const lg=ctx.createGain();lg.gain.value=lfoDepth;
+        lfo.connect(lg);lg.connect(g.gain);src.connect(f);f.connect(g);g.connect(audio.master);
+        src.start();lfo.start();this.nodes.push(src,lfo,f,g,lg);
+      },
+      start() {
+        this.stop();if(!audio.enabled||!audio.context)return;
+        const ctx=audio.context,sc=state.scene;
+        if(sc==='harbor'||sc==='lagoon'||sc==='wreck')this.loopNoise(ctx,480,.6,.05,.08,.028);
+        if(sc==='lighthouse')this.loopNoise(ctx,1400,.8,.035,.13,.02);
+        if(sc==='tavern')this.loopNoise(ctx,260,.4,.045,.35,.02);
+        if(sc==='vault'){
+          const o=ctx.createOscillator();o.type='sine';o.frequency.value=54;
+          const g=ctx.createGain();g.gain.value=.045;o.connect(g);g.connect(audio.master);o.start();
+          const o2=ctx.createOscillator();o2.type='sine';o2.frequency.value=54.6;
+          const g2=ctx.createGain();g2.gain.value=.03;o2.connect(g2);g2.connect(audio.master);o2.start();
+          this.nodes.push(o,g,o2,g2);
+        }
+        this.timer=setInterval(()=>this.event(),4200);
+      },
+      event() {
+        if(document.hidden||!audio.enabled)return;
+        const sc=state.scene,r=Math.random();
+        if(sc==='tavern'&&r<.5){audio.note(1900,.04,'sine',.05);audio.note(2500,.05,'sine',.04,.07);}
+        else if(sc==='wreck'&&r<.45){const f=100+Math.random()*40;audio.note(f,.5,'sawtooth',.035);audio.note(f*.8,.4,'sawtooth',.025,.12);}
+        else if((sc==='wreck'||sc==='vault')&&r<.7){audio.note(880,.05,'sine',.05);audio.note(520,.07,'sine',.04,.06);}
+        else if(sc==='lighthouse'&&r<.22){audio.note(82,1.6,'triangle',.11);audio.note(65,1.6,'triangle',.08,.02);}
+        else if(sc==='lagoon'&&r<.3){audio.note(1400+Math.random()*600,.08,'sine',.03,.05);audio.note(1600+Math.random()*500,.07,'sine',.025,.22);}
+      },
+      stop() {
+        if(this.timer){clearInterval(this.timer);this.timer=0;}
+        for(const n of this.nodes){try{n.stop?.();}catch{}try{n.disconnect?.();}catch{}}
+        this.nodes=[];
+      }
+    }
   };
   let lastStepAt = 0, nextGullAt = 0;
   /* Sprachausgabe: liest Dialogzeilen mit der Browser-Stimme vor (offline, Web Speech API).

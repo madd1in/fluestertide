@@ -27,7 +27,9 @@
         hotspot('bottle', 'Leere Flasche', 47, 76, 6, 12, 'object'),
         hotspot('tavern', 'Taverne Zum schiefen Aal', 69, 39, 12, 27, 'exit', 'tavern'),
         hotspot('bazaar', 'Zum Basar', 90, 52, 9, 25, 'exit', 'bazaar'),
-        hotspot('lighthouse', 'Zum Leuchtturm', 45, 12, 12, 27, 'exit', 'lighthouse')
+        hotspot('lighthouse', 'Zum Leuchtturm', 45, 12, 12, 27, 'exit', 'lighthouse'),
+        hotspot('moon', 'Der Mond', 17, 11, 8, 9, 'object'),
+        hotspot('ship', 'Ein schlafendes Schiff', 19, 45, 17, 13, 'object')
       ]
     },
     tavern: {
@@ -37,7 +39,9 @@
         hotspot('pirate', 'Käpt’n Konrad Kante', 24, 49, 12, 30, 'npc'),
         hotspot('candle', 'Sturmkerze', 57, 55, 6, 13, 'object'),
         hotspot('mug', 'Siegesbecher', 77, 58, 6, 13, 'object'),
-        hotspot('harbor', 'Zurück zum Hafen', 4, 34, 13, 44, 'exit', 'harbor')
+        hotspot('harbor', 'Zurück zum Hafen', 4, 34, 13, 44, 'exit', 'harbor'),
+        hotspot('kegs', 'Berühmte Fässer', 88, 78, 11, 20, 'object'),
+        hotspot('lamp', 'Die Hängelampe', 37, 19, 9, 8, 'object')
       ]
     },
     bazaar: {
@@ -48,7 +52,8 @@
         hotspot('fruit', 'Knallmango', 46, 61, 8, 12, 'object'),
         hotspot('sign', 'Basarschild', 82, 37, 9, 21, 'object'),
         hotspot('harbor', 'Zum Hafen', 2, 44, 9, 34, 'exit', 'harbor'),
-        hotspot('lagoon', 'Zur Lagune', 88, 55, 10, 28, 'exit', 'lagoon')
+        hotspot('lagoon', 'Zur Lagune', 88, 55, 10, 28, 'exit', 'lagoon'),
+        hotspot('garlands', 'Lichterkette', 8, 18, 84, 10, 'object')
       ]
     },
     lighthouse: {
@@ -57,7 +62,8 @@
         hotspot('keeper', 'Leuchtwartin Jona Docht', 68, 58, 12, 24, 'npc'),
         hotspot('lens', 'Leere Prismenhülse', 48, 30, 8, 13, 'object'),
         hotspot('mechanism', 'Die kalte Laterne', 40, 54, 20, 20, 'object'),
-        hotspot('harbor', 'Zum Hafen', 5, 60, 13, 28, 'exit', 'harbor')
+        hotspot('harbor', 'Zum Hafen', 5, 60, 13, 28, 'exit', 'harbor'),
+        hotspot('plaque', 'Römische Drei', 45, 74, 10, 9, 'object')
       ]
     },
     lagoon: {
@@ -67,7 +73,8 @@
         hotspot('spring', 'Die singende Quelle', 34, 58, 18, 14, 'object'),
         hotspot('shell', 'Flüstermuschel', 48, 80, 8, 10, 'object'),
         hotspot('gate', 'Nebelpfad zum Wrack', 82, 38, 14, 40, 'exit', 'wreck'),
-        hotspot('bazaar', 'Zum Basar', 3, 49, 12, 29, 'exit', 'bazaar')
+        hotspot('bazaar', 'Zum Basar', 3, 49, 12, 29, 'exit', 'bazaar'),
+        hotspot('palms', 'Schiefe Palmen', 7, 68, 11, 30, 'object')
       ]
     },
     wreck: {
@@ -77,7 +84,8 @@
         hotspot('chest', 'Die salzige Seekiste', 27, 62, 15, 16, 'object'),
         hotspot('bell', 'Eine stumme Schiffsglocke', 44, 24, 12, 24, 'object'),
         hotspot('vault', 'Zur Glockenkammer', 83, 52, 12, 28, 'exit', 'vault'),
-        hotspot('lagoon', 'Zur Lagune', 4, 45, 13, 38, 'exit', 'lagoon')
+        hotspot('lagoon', 'Zur Lagune', 4, 45, 13, 38, 'exit', 'lagoon'),
+        hotspot('seaweed', 'Seetangvorhang', 16, 18, 8, 26, 'object')
       ]
     },
     vault: {
@@ -86,7 +94,8 @@
         hotspot('antagonist', 'Kapitän Stillwasser', 64, 41, 12, 37, 'npc'),
         hotspot('bell', 'Die Schweigeglocke', 43, 22, 16, 30, 'object'),
         hotspot('altar', 'Der Dreiklangaltar', 36, 60, 24, 14, 'object'),
-        hotspot('wreck', 'Zurück zum Wrack', 4, 49, 14, 34, 'exit', 'wreck')
+        hotspot('wreck', 'Zurück zum Wrack', 4, 49, 14, 34, 'exit', 'wreck'),
+        hotspot('pillars', 'Runensäulen', 26, 26, 7, 46, 'object')
       ]
     }
   };
@@ -177,14 +186,18 @@
         rope: items.rope.description, bottle: items.bottle.description,
         tavern: 'Das Schild zeigt einen Aal in gefährlich schlechter Körperhaltung.',
         bazaar: 'Zwischen bunten Tüchern wartet Odo mit Dingen, die angeblich alle fast funktionieren.',
-        lighthouse: 'Der Leuchtturm ist dunkel. Auf einer Insel ist das ungefähr so praktisch wie ein Unterwasserfeuer.'
+        lighthouse: 'Der Leuchtturm ist dunkel. Auf einer Insel ist das ungefähr so praktisch wie ein Unterwasserfeuer.',
+        moon: 'Der Mond macht heute Überstunden und sagt dazu kein Wort. Respektabel.',
+        ship: 'Die „Flinke Muräne“ schaukelt friedvoll vor sich hin. Reine Höflichkeitsschaukelei — Wind ist ja keiner da.'
       },
       tavern: {
         bartender: 'Ada poliert ein Glas. Es ist sauber genug, um seinen eigenen Stammbaum zu erkennen.',
         pirate: f.duelWon ? 'Konrad bewundert widerwillig meine Schlagfertigkeit.' : 'Konrad Kante. Wuchtige Stiefel, scharfe Zunge, ziemlich kleine Lesebrille.',
         candle: 'Eine Sturmkerze. Ada gibt sie nur für einen neuen guten Seemannsreim her.',
         mug: 'Konrads Siegesbecher. Man muss ihn sich mit Worten verdienen.',
-        harbor: 'Die Tür zum Hafen. Sie knarzt sogar in der großen Stille. Eigensinniges Möbel.'
+        harbor: 'Die Tür zum Hafen. Sie knarzt sogar in der großen Stille. Eigensinniges Möbel.',
+        kegs: 'Adas Fasslager. Eines davon soll das berühmteste Fass der südlichen See sein. Sie weigert sich standhaft zu sagen, welches.',
+        lamp: 'Die Hängelampe flackert bei guten Geschichten. Heute abend dröhnt sie verdächtig.'
       },
       bazaar: {
         merchant: 'Odo Glas verkauft, tauscht und erzählt gern, was alles „antiquitätsnah“ ist.',
@@ -192,33 +205,38 @@
         fruit: 'Ein Schild am Obst: „Knallmango für Pippa. Gratis. Bitte den Papagei nicht auf Kredit füttern.“',
         sign: '„Glas gegen Glas. Freie Mango für Pippa. Lagunenpfad nur mit Konrads Erlaubnis. Beschwerden bitte im Reim.“',
         harbor: 'Zum Hafen, an der unverhältnismäßig stillen See vorbei.',
-        lagoon: f.duelWon ? 'Der Lagunenpfad steht mir offen.' : 'Ein Schild verbietet den Durchgang ohne Konrads Erlaubnis. Es hat sehr überzeugende Nägel.'
+        lagoon: f.duelWon ? 'Der Lagunenpfad steht mir offen.' : 'Ein Schild verbietet den Durchgang ohne Konrads Erlaubnis. Es hat sehr überzeugende Nägel.',
+        garlands: 'Wunderkerzen aus Odos Restposten. Sie leuchten fröhlich, solange niemand fragt, woraus sie gemacht sind.'
       },
       lighthouse: {
         keeper: 'Jona Docht wacht über das Licht. Gerade wacht sie eher über dessen Abwesenheit.',
         lens: f.lensSet ? 'Das Sturmprisma sitzt sicher in seiner Hülse.' : 'Die Hülse braucht ein Sturmprisma. Gewöhnliche Glasscherben haben zu wenig Berufserfahrung.',
         mechanism: f.beaconFixed ? 'Das Leuchtfeuer brennt. Endlich hat der Nebel etwas zu respektieren.' : f.lampLit ? 'Die Sturmkerze brennt. Jetzt fehlt das Prisma in der Hülse.' : 'Die Laterne ist kalt. Eine Sturmkerze könnte sie wieder entzünden.',
-        harbor: 'Die Treppe zum Hafen. Dafür braucht man mehr Beine als Geduld.'
+        harbor: 'Die Treppe zum Hafen. Dafür braucht man mehr Beine als Geduld.',
+        plaque: '„III.“ Was mit I und II passiert ist, weiß nur das Meer. Und das redet ja bekanntlich gerade nicht.'
       },
       lagoon: {
         hermit: 'Sela trägt Seetang mit der Würde einer Königin. Eine sehr nasse Königin.',
         spring: 'Die Quelle summt mit winziger Stimme. Ihr Wasser ist gut gegen trockene Kehlen. Ein Becher wäre praktisch.',
         shell: items.shell.description,
         gate: f.fogCleared ? 'Der Windkompass hat einen sicheren Pfad durch den Nebel gefunden.' : 'Der Nebel ist ein Labyrinth ohne Wände. Hier sollte ich den Windkompass benutzen.',
-        bazaar: 'Zurück zum Basar. Ich höre beinahe schon den Papagei. Beinahe.'
+        bazaar: 'Zurück zum Basar. Ich höre beinahe schon den Papagei. Beinahe.',
+        palms: 'Zwei Palmen, die sich seit Jahrzehnten nicht einig sind, aus welcher Richtung der Wind einst kam.'
       },
       wreck: {
         ghost: f.ghostHelped ? 'Balthasar hat seine Stimme wieder. Sie klingt nach Holz, Salz und sehr alten Witzen.' : 'Der Geist deutet verzweifelt auf seine Kehle und eine winzige Quelle auf seiner Seekarte.',
         chest: f.forkTaken ? 'Die Kiste ist offen und leer. Sehr ehrlicher Zustand für eine Schatzkiste.' : f.ghostHelped ? 'Balthasars Kiste ist offen. Eine silberne Stimmgabel liegt darin.' : 'Die Kiste gehört Balthasar. Er hält den Schlüssel fest und seine Kehle noch fester.',
         bell: 'Eine stumme Schiffsglocke. Ihre große Schwester steht in der Glockenkammer.',
         vault: f.ghostHelped ? 'Balthasar hat den Eingang zur Glockenkammer geöffnet.' : 'Eine Geistersperre schützt die Glockenkammer. Sie sieht erstaunlich pflegeleicht aus.',
-        lagoon: 'Der sichere Pfad führt zurück zur Lagune.'
+        lagoon: 'Der sichere Pfad führt zurück zur Lagune.',
+        seaweed: 'Seetang als Vorhang. Wenn er sich bewegt, stellt er sich tot, damit niemand Fragen stellt.'
       },
       vault: {
         antagonist: 'Kapitän Stillwasser sieht aus, als hätte ihn jemand mitten in einer erholsamen Bosheit gestört.',
         bell: state.finished ? 'Die Schweigeglocke ist gesprungen. Das Meer hat seine Stimme zurück.' : f.harmonyUnlocked ? 'Die Glocke ist empfänglich für das Resonanzpendel. Zeit für den letzten Schlag.' : 'In der Glocke wirbeln Wellenrauschen, Wind und Stimmen. Der Altar muss sie zuerst einstimmen.',
         altar: f.harmonyUnlocked ? 'Drei Zeichen glühen: Meer, Wind, Herz. Der Dreiklang ist vollständig.' : 'Drei Zeichen: eine Welle, ein wehendes Segel, ein Herz. Balthasar kennt die Reihenfolge.',
-        wreck: 'Zurück zu Balthasar und der Ungefähren Hoffnung.'
+        wreck: 'Zurück zu Balthasar und der Ungefähren Hoffnung.',
+        pillars: 'Ein Säulenpaar voller Runen. Eine davon kratzt sich gelegentlich — vermutlich aus Langeweile.'
       }
     };
     const description = descriptions[state.scene][target];
